@@ -109,8 +109,6 @@ func (g *GeoFilter) Estimate() *GeoEstimated {
 	}
 	lat := g.filter.state.AtVec(_LAT)
 	/*
-		Processing category: rye
-		2024/03/07 10:03:31 main.go:347: Douglas-Peucker simplification with threshold 8e-05
 		panic: runtime error: index out of range [120] with length 91
 
 		goroutine 6 [running]:
@@ -124,7 +122,39 @@ func (g *GeoFilter) Estimate() *GeoEstimated {
 		        /home/ia/dev/rotblauer/catvector/main.go:587 +0x1a9
 		created by main.readStreamRKalmanFilter in goroutine 1
 		        /home/ia/dev/rotblauer/catvector/main.go:558 +0x21f
+		---
+		panic: runtime error: index out of range [-40]
+
+		goroutine 1255 [running]:
+		github.com/regnull/kalman/geo.FastMetersPerDegreeLat(...)
+			/home/ia/go/pkg/mod/github.com/regnull/kalman@v0.0.0-20200908141424-10753ec93999/geo/fast_geo_factors.go:200
+		github.com/regnull/kalman.(*GeoFilter).Estimate(0xc01ab9cbb0)
+			/home/ia/go/pkg/mod/github.com/regnull/kalman@v0.0.0-20200908141424-10753ec93999/geo_filter.go:111 +0x3ad
+		github.com/rotblauer/catd/geo/act.(*ProbableCat).Add(0xc033ab0ad0, {{0xe8bf40, 0x155f7f0}, {0xc0a184f1a0, 0x7}, {0x0, 0x0, 0x0}, {0x156dd18, 0xc0a184f200}, ...})
+			/home/ia/dev/rotblauer/catd/geo/act/act.go:183 +0x173
+		github.com/rotblauer/catd/api.(*Cat).ImprovedActTracks.func1()
+			/home/ia/dev/rotblauer/catd/api/act.go:43 +0x209
+		created by github.com/rotblauer/catd/api.(*Cat).ImprovedActTracks in goroutine 1250
+			/home/ia/dev/rotblauer/catd/api/act.go:31 +0x254
+		---
+		panic: runtime error: index out of range [464] with length 91
+
+		goroutine 440 [running]:
+		github.com/regnull/kalman/geo.FastMetersPerDegreeLat(...)
+				/home/ia/dev/regnull/kalman/geo/fast_geo_factors.go:200
+		github.com/regnull/kalman.(*GeoFilter).Estimate(0xc02f836190)
+				/home/ia/dev/regnull/kalman/geo_filter.go:128 +0x3f8
+		github.com/rotblauer/catd/geo/act.(*ProbableCat).Add(0xc0de909860, {{0xe8cf60, 0x1560ae8}, {0xc08e3422d0, 0x7}, {0x0, 0x0, 0x0}, {0x156f018, 0xc08e342330}, ...})
+				/home/ia/dev/rotblauer/catd/geo/act/act.go:191 +0x25d
+		github.com/rotblauer/catd/api.(*Cat).ImprovedActTracks.func1()
+				/home/ia/dev/rotblauer/catd/api/act.go:43 +0x209
+		created by github.com/rotblauer/catd/api.(*Cat).ImprovedActTracks in goroutine 435
+				/home/ia/dev/rotblauer/catd/api/act.go:31 +0x254
 	*/
+	if lat < -90 || lat > 90 {
+		return nil
+	}
+
 	metersPerDegreeLat := geo.FastMetersPerDegreeLat(lat)
 	metersPerDegreeLng := geo.FastMetersPerDegreeLng(lat)
 	speedLatMeters := g.filter.state.AtVec(_VLAT) * metersPerDegreeLat
