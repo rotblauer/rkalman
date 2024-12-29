@@ -108,6 +108,23 @@ func (g *GeoFilter) Estimate() *GeoEstimated {
 		return nil
 	}
 	lat := g.filter.state.AtVec(_LAT)
+	/*
+		Processing category: rye
+		2024/03/07 10:03:31 main.go:347: Douglas-Peucker simplification with threshold 8e-05
+		panic: runtime error: index out of range [120] with length 91
+
+		goroutine 6 [running]:
+		github.com/regnull/kalman/geo.FastMetersPerDegreeLat(...)
+		        /home/ia/dev/regnull/kalman/geo/fast_geo_factors.go:200
+		github.com/regnull/kalman.(*GeoFilter).Estimate(0xc000070120)
+		        /home/ia/dev/regnull/kalman/geo_filter.go:111 +0x3f8
+		main.(*RKalmanFilterT).EstimateFromObservation(0xc000010270, 0xc0003d44b0)
+		        /home/ia/dev/rotblauer/catvector/main.go:501 +0x62d
+		main.readStreamRKalmanFilter.func1()
+		        /home/ia/dev/rotblauer/catvector/main.go:587 +0x1a9
+		created by main.readStreamRKalmanFilter in goroutine 1
+		        /home/ia/dev/rotblauer/catvector/main.go:558 +0x21f
+	*/
 	metersPerDegreeLat := geo.FastMetersPerDegreeLat(lat)
 	metersPerDegreeLng := geo.FastMetersPerDegreeLng(lat)
 	speedLatMeters := g.filter.state.AtVec(_VLAT) * metersPerDegreeLat

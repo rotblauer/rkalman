@@ -194,8 +194,8 @@ var metersPerDegreeLng = []float64{
 
 // FastMetersPerDegreeLat returns meters per a latitude degree using a pre-computed lookup table.
 func FastMetersPerDegreeLat(lat float64) float64 {
-	i0 := int(math.Floor(lat))
-	i1 := int(math.Ceil(lat))
+	i0 := int(math.Abs(math.Floor(lat)))
+	i1 := int(math.Abs(math.Ceil(lat)))
 	x := lat - float64(i0)
 	m0 := metersPerDegreeLat[i0]
 	m1 := metersPerDegreeLat[i1]
@@ -204,8 +204,8 @@ func FastMetersPerDegreeLat(lat float64) float64 {
 
 // FastMetersPerDegreeLng returns meters per a longitude degree using a pre-computed lookup table.
 func FastMetersPerDegreeLng(lng float64) float64 {
-	i0 := int(math.Floor(lng))
-	i1 := int(math.Ceil(lng))
+	i0 := int(math.Abs(math.Floor(lng)))
+	i1 := int(math.Abs(math.Ceil(lng)))
 	x := lng - float64(i0)
 	m0 := metersPerDegreeLng[i0]
 	m1 := metersPerDegreeLng[i1]
